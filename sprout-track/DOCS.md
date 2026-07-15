@@ -10,7 +10,7 @@ On first access, the **Setup Wizard** will guide you through:
 2. **Security setup** — system-wide PIN or per-caretaker PINs
 3. **Baby setup** — name, birth date, and feeding/diaper thresholds
 
-Click **OPEN WEB UI** on the addon page, or navigate to `http://<your-ha-host>:3000`.
+Click **OPEN WEB UI** on the addon page, or navigate to `http://<your-ha-host>:3333`.
 
 Default admin password for the Family Manager (`/family-manager`): **`admin`**
 
@@ -40,7 +40,7 @@ panel_iframe:
   sprout_track:
     title: Sprout Track
     icon: mdi:baby-carriage
-    url: http://homeassistant.local:3000
+    url: http://homeassistant.local:3333
     require_admin: false
 ```
 
@@ -62,7 +62,7 @@ Add to `configuration.yaml`:
 ```yaml
 rest_command:
   sprout_track_notification_check:
-    url: "http://homeassistant.local:3000/api/notifications/cron"
+    url: "http://homeassistant.local:3333/api/notifications/cron"
     method: POST
     headers:
       Authorization: "Bearer YOUR_NOTIFICATION_CRON_SECRET"
@@ -75,7 +75,7 @@ Then create a HA automation with a **Time Pattern** trigger set to every 1 minut
 
 ## Cloudflare Tunnel (Remote Access)
 
-If you use the [Cloudflare addon](https://github.com/brenner-tobias/addon-cloudflared) for remote access, add a public hostname pointing to `http://homeassistant.local:3000` in the Zero Trust dashboard.
+If you use the [Cloudflare addon](https://github.com/brenner-tobias/addon-cloudflared) for remote access, add a public hostname pointing to `http://homeassistant.local:3333` in the Zero Trust dashboard.
 
 ## Support
 

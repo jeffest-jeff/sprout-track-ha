@@ -16,5 +16,5 @@ COPY --from=app /app ./
 COPY run.sh /run.sh
 RUN sed -i 's/\r$//' /run.sh && chmod a+x /run.sh
 
-EXPOSE 3000
+EXPOSE 3333
 CMD ["/run.sh"]

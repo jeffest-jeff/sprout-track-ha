@@ -7,7 +7,7 @@ export ENABLE_NOTIFICATIONS=$(bashio::config 'enable_notifications')
 
 export DATABASE_PROVIDER="sqlite"
 export NODE_ENV="production"
-export PORT="3000"
+export PORT="3333"
 
 # Set database URLs to absolute paths before anything else runs.
 # The Prisma client reads process.env.DATABASE_URL at runtime; using an absolute

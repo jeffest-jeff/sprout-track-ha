@@ -6,13 +6,13 @@ init: false
 arch:
   - amd64
   - aarch64
-webui: http://[HOST]:[PORT:3000]
+webui: http://[HOST]:[PORT:3333]
 panel_icon: mdi:baby-carriage
 panel_title: Sprout Track
 ports:
-  3000/tcp: 3000
+  3333/tcp: 3333
 ports_description:
-  3000/tcp: "Web UI"
+  3333/tcp: "Web UI"
 map:
   - share:rw
 options:
