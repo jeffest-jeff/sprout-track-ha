@@ -29,7 +29,7 @@ panel_iframe:
   sprout_track:
     title: Sprout Track
     icon: mdi:baby-carriage
-    url: http://homeassistant.local:3333
+    url: http://homeassistant.local:3000
     require_admin: false
 ```
 
@@ -45,7 +45,7 @@ Push notifications require HTTPS (e.g. via the Cloudflare Tunnel addon). Once HT
 # configuration.yaml
 rest_command:
   sprout_track_notification_check:
-    url: "http://homeassistant.local:3333/api/notifications/cron"
+    url: "http://homeassistant.local:3000/api/notifications/cron"
     method: POST
     headers:
       Authorization: "Bearer YOUR_NOTIFICATION_CRON_SECRET"
