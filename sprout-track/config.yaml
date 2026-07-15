@@ -1,0 +1,25 @@
+name: "Sprout Track"
+description: "Self-hosted baby activity tracker"
+version: "1.0.0"
+slug: "sprout_track"
+init: false
+arch:
+  - amd64
+  - aarch64
+webui: http://[HOST]:[PORT:3000]
+panel_icon: mdi:baby-carriage
+panel_title: Sprout Track
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: "Web UI"
+map:
+  - share:rw
+options:
+  auth_life: 86400
+  idle_time: 604800
+  enable_notifications: true
+schema:
+  auth_life: int
+  idle_time: int
+  enable_notifications: bool
