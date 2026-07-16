@@ -1,0 +1,43 @@
+name: Sync upstream version
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # daily at 8am UTC
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest upstream release
+        id: upstream
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/Oak-and-Sprout/sprout-track/releases/latest | jq -r .tag_name | sed 's/^v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get current tracked version
+        id: current
+        run: |
+          VERSION=$(cat upstream-version.txt 2>/dev/null || echo "")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Bump version if changed
+        if: steps.upstream.outputs.version != steps.current.outputs.version && steps.upstream.outputs.version != 'null'
+        run: |
+          NEW="${{ steps.upstream.outputs.version }}"
+          sed -i "s/^version: .*/version: \"$NEW\"/" sprout-track/config.yaml
+          echo "$NEW" > upstream-version.txt
+
+      - name: Commit and push
+        if: steps.upstream.outputs.version != steps.current.outputs.version && steps.upstream.outputs.version != 'null'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sprout-track/config.yaml upstream-version.txt
+          git commit -m "Sync upstream v${{ steps.upstream.outputs.version }}"
+          git push
