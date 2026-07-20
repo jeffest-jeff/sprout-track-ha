@@ -17,12 +17,16 @@ export LOG_DATABASE_URL="file:/share/sprout-track/baby-tracker-logs.db"
 
 # Ensure the share directory exists for persistent storage
 mkdir -p /share/sprout-track
-mkdir -p /app/env
+# Secrets (ENC_HASH, NOTIFICATION_CRON_SECRET, etc.) must live under /share, not /app —
+# /app is wiped on every container recreate (addon rebuild/update), while /share persists.
+# The database on /share encrypts values (adminPass, VAPID keys) using ENC_HASH, so the
+# key has to survive exactly as long as the data it protects, or decryption silently breaks.
+mkdir -p /share/sprout-track/env
 
 # Populate env defaults (JWT_SECRET, VAPID keys, etc.)
-npm run env:ensure -- docker /app/env/.env || true
+npm run env:ensure -- docker /share/sprout-track/env/.env || true
 
-ENV_FILE="/app/env/.env"
+ENV_FILE="/share/sprout-track/env/.env"
 
 # Patch database URLs in the env file so sourcing it does not overwrite our exports
 if grep -q "^DATABASE_URL=" "$ENV_FILE"; then
@@ -77,6 +81,16 @@ bashio::log.info "Log schema push done"
 
 bashio::log.info "Seeding database..."
 npx prisma db seed || true
+
+if [ "$ENABLE_NOTIFICATIONS" = "true" ]; then
+  bashio::log.info "Notifications are enabled, setting up notification cron job..."
+  npm run notification:cron:setup || bashio::log.warning "Cron job setup failed, continuing anyway"
+
+  bashio::log.info "Starting cron daemon..."
+  crond -f -d 8 &
+else
+  bashio::log.info "Notifications are disabled (enable_notifications option is off)"
+fi
 
 bashio::log.info "Starting Sprout Track..."
 exec npm start
