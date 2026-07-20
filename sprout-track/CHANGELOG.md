@@ -1,3 +1,7 @@
+## 2026.7.0
+
+- Addon version now uses CalVer (`YYYY.M.PATCH`, matching Home Assistant core's own scheme) instead of mirroring upstream Sprout Track's version number. Previously the addon version tracked upstream's 1:1 (e.g. 1.6.0 = 1.6.0), but wrapper-only fixes in 1.6.1/1.6.2 bumped the addon past upstream's actual version (still 1.6.0), breaking that assumption and risking a real collision later. The addon version no longer implies any particular upstream version — check the changelog for which upstream release a given addon version bundles.
+
 ## 1.6.2
 
 - Fix: `run-notification-cron.sh` (and other bundled scripts) hardcode `/app/.env` as their default env file location, which no longer exists after 1.6.1 moved secrets to `/share/sprout-track/env/.env`. Cron would fail every run with "NOTIFICATION_CRON_SECRET is not set". `run.sh` now symlinks `/app/.env` to the persisted file so these scripts resolve it transparently.

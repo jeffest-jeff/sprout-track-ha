@@ -26,12 +26,31 @@ jobs:
           VERSION=$(cat upstream-version.txt 2>/dev/null || echo "")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      # The addon's own version is CalVer (YYYY.M.PATCH, matching HA core), independent of
+      # upstream's version number — it no longer mirrors upstream's digits. HA's update
+      # comparator (AwesomeVersion) treats "<upstream>-<n>"-style suffixes as pre-release
+      # modifiers, so once the addon version outpaces upstream's digits (as happened after
+      # 1.6.1/1.6.2, wrapper-only patches), copying upstream's raw tag back in would look
+      # like a downgrade and HA would never offer it as an update. CalVer sidesteps this
+      # entirely since it's always ahead of upstream's semver and never collides with it.
       - name: Bump version if changed
+        id: bump
         if: steps.upstream.outputs.version != steps.current.outputs.version && steps.upstream.outputs.version != 'null'
         run: |
-          NEW="${{ steps.upstream.outputs.version }}"
+          CURRENT=$(grep '^version:' sprout-track/config.yaml | sed -E 's/version: "(.*)"/\1/')
+          CUR_YEAR=$(cut -d. -f1 <<< "$CURRENT")
+          CUR_MONTH=$(cut -d. -f2 <<< "$CURRENT")
+          CUR_PATCH=$(cut -d. -f3 <<< "$CURRENT")
+          NOW_YEAR=$(date -u +%Y)
+          NOW_MONTH=$(date -u +%-m)
+          if [ "$CUR_YEAR" = "$NOW_YEAR" ] && [ "$CUR_MONTH" = "$NOW_MONTH" ]; then
+            NEW="$NOW_YEAR.$NOW_MONTH.$((CUR_PATCH + 1))"
+          else
+            NEW="$NOW_YEAR.$NOW_MONTH.0"
+          fi
           sed -i "s/^version: .*/version: \"$NEW\"/" sprout-track/config.yaml
-          echo "$NEW" > upstream-version.txt
+          echo "${{ steps.upstream.outputs.version }}" > upstream-version.txt
+          echo "new_version=$NEW" >> $GITHUB_OUTPUT
 
       - name: Commit and push
         if: steps.upstream.outputs.version != steps.current.outputs.version && steps.upstream.outputs.version != 'null'
@@ -39,5 +58,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add sprout-track/config.yaml upstream-version.txt
-          git commit -m "Sync upstream v${{ steps.upstream.outputs.version }}"
+          git commit -m "Bump addon to v${{ steps.bump.outputs.new_version }} (syncs upstream v${{ steps.upstream.outputs.version }})"
           git push
