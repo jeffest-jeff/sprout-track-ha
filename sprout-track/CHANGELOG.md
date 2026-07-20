@@ -1,3 +1,7 @@
+## 1.6.2
+
+- Fix: `run-notification-cron.sh` (and other bundled scripts) hardcode `/app/.env` as their default env file location, which no longer exists after 1.6.1 moved secrets to `/share/sprout-track/env/.env`. Cron would fail every run with "NOTIFICATION_CRON_SECRET is not set". `run.sh` now symlinks `/app/.env` to the persisted file so these scripts resolve it transparently.
+
 ## 1.6.1
 
 - Fix: notification cron job (timer-based reminders) was never installed or started — `run.sh` now runs `notification:cron:setup` and starts `crond` when notifications are enabled, matching upstream's `docker-startup.sh`

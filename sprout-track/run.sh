@@ -46,6 +46,11 @@ set -a
 . "$ENV_FILE"
 set +a
 
+# Several bundled scripts (run-notification-cron.sh, reset-admin-password.js) hardcode
+# /app/.env as their default env file location. Symlink it to the real persisted file so
+# those scripts keep working without needing to know about the /share path.
+ln -sf "$ENV_FILE" /app/.env
+
 # Re-assert database URLs after sourcing in case the env file still had stale values
 export DATABASE_URL="file:/share/sprout-track/baby-tracker.db"
 export LOG_DATABASE_URL="file:/share/sprout-track/baby-tracker-logs.db"
