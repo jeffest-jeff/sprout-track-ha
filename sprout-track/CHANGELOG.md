@@ -1,3 +1,7 @@
+## 2026.8.1
+
+- Sync upstream Sprout Track to [v1.6.6](https://github.com/Oak-and-Sprout/sprout-track/releases/tag/v1.6.6).
+
 ## 2026.7.0
 
 - Addon version now uses CalVer (`YYYY.M.PATCH`, matching Home Assistant core's own scheme) instead of mirroring upstream Sprout Track's version number. Previously the addon version tracked upstream's 1:1 (e.g. 1.6.0 = 1.6.0), but wrapper-only fixes in 1.6.1/1.6.2 bumped the addon past upstream's actual version (still 1.6.0), breaking that assumption and risking a real collision later. The addon version no longer implies any particular upstream version — check the changelog for which upstream release a given addon version bundles.
