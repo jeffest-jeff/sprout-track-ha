@@ -1,3 +1,7 @@
+## 2026.8.2
+
+- Sync upstream Sprout Track to [v1.6.7](https://github.com/Oak-and-Sprout/sprout-track/releases/tag/v1.6.7).
+
 ## 2026.8.1
 
 - Sync upstream Sprout Track to [v1.6.6](https://github.com/Oak-and-Sprout/sprout-track/releases/tag/v1.6.6).
